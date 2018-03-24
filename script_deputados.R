@@ -80,6 +80,24 @@ df<- map_dfr(seq_along(lista_sessoes),~pluck(l,.x,f) %>% as.data.frame(stringsAs
 
 ## Discursos
 
+### Função para decodificar o rtfbase64
+decode_rtf <- function(txt) {
+txt %>%
+base64Decode %>%
+str_replace_all("\\\\'e3", "ã") %>%
+str_replace_all("\\\\'e1", "á") %>%
+str_replace_all("\\\\'e9", "é") %>%
+str_replace_all("\\\\'e7", "ç") %>%
+str_replace_all("\\\\'ed", "í") %>%
+str_replace_all("\\\\'f3", "ó") %>%
+str_replace_all("\\\\'ea", "ê") %>%
+str_replace_all("\\\\'e0", "à") %>%
+str_replace_all("(\\\\[[:alnum:]']+|[\\r\\n]|^\\{|\\}$)", "") %>%
+str_replace_all("\\{\\{[[:alnum:]; ]+\\}\\}", "") %>%
+str_trim
+}
+
+
 discursos_url<-glue("http://www.camara.leg.br/SitCamaraWS/SessoesReunioes.asmx/obterInteiroTeorDiscursosPlenario?codSessao={df$codSessao}&numOrador={df$numero_orador}&numQuarto={df$numeroQuarto}&numInsercao={df$numeroInsercao}")
 
 inteiro_teor<-discursos_url %>% 
